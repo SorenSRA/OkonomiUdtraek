@@ -11,6 +11,9 @@ drill_sheet_name = r"Drill-through"
 afstem_sheet_name = r"SRAAfstemning"
 budget_sheet_name = r"SRABudgetopfolgning"
 
+opgave_sheet = r"Okonomi"
+path_to_opgavenr = r"F:/EUOkonomi/LIFE-Okonomi/Opfolgning/SystemFiler/OpgaveNumre.xlsx"
+
 index_col = r"Finanspost Detaljer Entry No"
 opg_col = r"Opgave Dim Opgave"
 arts_col = r"Artskonto Dim_artskonto"

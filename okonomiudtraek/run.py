@@ -7,8 +7,6 @@ import PySimpleGUI as sg  # pip install pysimplegui
 # import af egne moduler
 from lisudtraek import lisudtraek
 
-import PySimpleGUI as sg
-
 
 def main_window():
     default_folder = settings["PROGRAM"]["outputfolder_default"]

@@ -9,6 +9,15 @@ from ownfunc.kvartal import kvartal
 from constants.opsatning import *
 
 
+opgave_projekt = {}
+
+
+def indlaes_opgavenr():
+    global opgave_projekt
+    df_opgavenr = indlas_df(path_to_opgavenr, opgave_sheet)
+    opgave_projekt = df_opgavenr.set_index("Opgave")["Projekt"].to_dict()
+
+
 def indlas_df(path, sheet):
     if findesexcelark(path):
         return pd.read_excel(path, sheet_name=sheet)
@@ -55,7 +64,9 @@ def indsat_col(df, loc, cols):
 def opdater_opfolg(df):
     df = indsat_col(df, indsaet_loc, new_opfolg_col)
     for index, row in df.iterrows():
-        df.loc[index, proj_col.col_name] = projekt(df.loc[index, opg_col])
+        df.loc[index, proj_col.col_name] = projekt(
+            df.loc[index, opg_col], opgave_projekt
+        )
         df.loc[index, kvt_col.col_name] = kvartal(df.loc[index, maaned_col])
         df.loc[index, konto_col.col_name] = srakonto(
             df.loc[index, arts_col], df.loc[index, formal_col]
@@ -70,7 +81,9 @@ def opdater_afstem(df, df_old):
         if skal_rk_slettes(df.loc[index, arts_col]):
             df.drop(index, axis=0, inplace=True)
         else:
-            df.loc[index, proj_col.col_name] = projekt(df.loc[index, opg_col])
+            df.loc[index, proj_col.col_name] = projekt(
+                df.loc[index, opg_col], opgave_projekt
+            )
             df.loc[index, korr_col.col_name] = hent_fra_old(
                 df_old, index, korr_col.col_name
             )
@@ -113,9 +126,6 @@ def lisudtraek(file_path_newudtrak, file_path_oldudtrak, file_path_newanalyse):
     df_budgetop = opdater_opfolg(df_budgetop)
     df_afstem = opdater_afstem(df_afstem, df_oldafstem)
 
-    # df_empty = pd.DataFrame()
-    # df_empty.to_excel(file_path_newanalyse, index)
-
     with pd.ExcelWriter(file_path_newanalyse, mode="w") as writer:
         # Insert the DataFrame into an Excel sheet
         df_drill.to_excel(writer, sheet_name=drill_sheet_name, index=False)
@@ -124,6 +134,9 @@ def lisudtraek(file_path_newudtrak, file_path_oldudtrak, file_path_newanalyse):
 
     return 0  # alt gik godt
 
+
+# indlæs opgavNr fra Excel-ark
+indlaes_opgavenr()
 
 if __name__ == "__main__":
     exit_code = lisudtraek()
